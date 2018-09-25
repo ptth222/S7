@@ -20,7 +20,7 @@ There are up to 3 different outputs to the program depending on user input. Ther
 
 Reference
 -----------
-If you use the software for a publication please use DOI (repository DOI here) as a reference.
+If you use the software for a publication please use DOI [10.5281/zenodo.1434958](https://zenodo.org/badge/latestdoi/150272490) as a reference.
 If you would like to reference the paper please use DOI (paper DOI here).
 
 Quick Start

@@ -2297,6 +2297,8 @@ class S8_GUI(wx.Frame):
         
         else:
             
+            button.SetValue(True)
+            
             if self.S8_thread:
                 self.S8_thread.abort()
             else:
