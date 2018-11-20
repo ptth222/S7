@@ -144,7 +144,7 @@ class S8Thread(threading.Thread):
                 self.current_mass_range_index = i
                 self.intensity_dataframe = intensity_dataframe
                 self.current_mass_range = mass_ranges[i]
-                self.precision_multiple = int(self.RAW_and_User_info.segment_settings["Bin Widths"][self.current_mass_range])
+                self.precision_multiple = int(self.RAW_and_User_info.segment_settings["Bin Widths (x MiND)"][self.current_mass_range])
                 
                 self.CheckUserAbort()
                 
@@ -228,7 +228,7 @@ class S8Thread(threading.Thread):
         raw_file_name = re.split(r"\.raw", raw_file_name)[0]
         
         
-        if self.RAW_and_User_info.flags["Full Data"] or self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Full Data"] or self.RAW_and_User_info.flags["Noise Reduction"]:
             raw_file_directory = output_directory + "\\" + raw_file_name
             if not os.path.exists(raw_file_directory):
                 try:
@@ -250,7 +250,7 @@ class S8Thread(threading.Thread):
                         raise
         
         
-        if self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Noise Reduction"]:
             noise_writers = []
             noise_writer_index = 0
             noise_writer_template = raw_file_directory + "\\Noise_Reduction_"
@@ -267,7 +267,7 @@ class S8Thread(threading.Thread):
 
 
 
-        if self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Noise Reduction"]:
             self.noise_writer_index = noise_writer_index
             self.noise_writers = noise_writers
             self.noise_writer_template = noise_writer_template
@@ -305,6 +305,8 @@ class S8Thread(threading.Thread):
         removed_scans = []
         
         for i in range(1,num_of_scans+1):
+            
+            self.CheckUserAbort()
             
             trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
             
@@ -372,7 +374,7 @@ class S8Thread(threading.Thread):
         front_segments_to_skip = self.RAW_and_User_info.front_segments_to_skip
         rear_segments_to_skip = self.RAW_and_User_info.rear_segments_to_skip
         internal_calibrant_data_by_mass_range = self.internal_calibrant_data_by_mass_range
-        precision_multiples = self.RAW_and_User_info.segment_settings["Bin Widths"]
+        precision_multiples = self.RAW_and_User_info.segment_settings["Bin Widths (x MiND)"]
         internal_calibration_masses = self.RAW_and_User_info.segment_settings["Internal Calibration Masses"]
         internal_calibration_tolerances = self.RAW_and_User_info.segment_settings["Internal Calibration Tolerances"]
         mass_ranges = self.RAW_and_User_info.mass_ranges
@@ -383,6 +385,8 @@ class S8Thread(threading.Thread):
         needs_quit = False
         correction_factors = []
         for i in range(0+front_segments_to_skip, len(scan_data_by_mass) - rear_segments_to_skip):
+            
+            self.CheckUserAbort()
             
             current_mass_range = mass_ranges[i]
             
@@ -727,7 +731,7 @@ class S8Thread(threading.Thread):
         noise_dataframe = self.noise_dataframe
         overlap_tolerance = self.RAW_and_User_info.segment_settings["Overlap Tolerances"][self.current_mass_range]
         previous_num_of_scans = self.previous_num_of_scans
-        if self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Noise Reduction"]:
             noise_writers = self.noise_writers
             noise_writer_index = self.noise_writer_index
         full_segments = self.full_segments
@@ -833,7 +837,7 @@ class S8Thread(threading.Thread):
                 merged["Median m/z"] = (merged["First Range Median m/z"] + merged["Second Range Median m/z"]) /2
                 
                 
-                if self.RAW_and_User_info.flags["Noise Data"]:
+                if self.RAW_and_User_info.flags["Noise Reduction"]:
                     ## Write the merged dataframe out to the Excel file for overlap region alignment.
                     sheet_name = "Overlap " + str(overlap_min_mass) + "-" + str(overlap_max_mass)
                     merged.to_excel(noise_writers[noise_writer_index], sheet_name = sheet_name)
@@ -1016,7 +1020,7 @@ class S8Thread(threading.Thread):
             full_data_writer_index = self.full_data_writer_index
             full_data_writer_template = self.full_data_writer_template
         
-        if self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Noise Reduction"]:
             noise_dataframe = self.noise_dataframe
             noise_row_count = self.noise_row_count
             noise_writers = self.noise_writers
@@ -1029,7 +1033,7 @@ class S8Thread(threading.Thread):
         raw_file_name = self.RAW_and_User_info.raw_file_name
         
         
-        if self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Noise Reduction"]:
             ## If there are greater than around one million rows in the data frame
             ## it has to be split up to write to an Excel file.
             if len(noise_dataframe) > 1000000:
@@ -1096,7 +1100,7 @@ class S8Thread(threading.Thread):
 
         
         
-        if self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Noise Reduction"]:
             noise_row_count += len(noise_dataframe)
             if noise_row_count > 1000000:
                 noise_row_count = 0
@@ -1119,7 +1123,7 @@ class S8Thread(threading.Thread):
         if self.RAW_and_User_info.flags["Full Data"]:
             intensity_dataframe.to_excel(full_data_writers[full_data_writer_index], sheet_name = sheet_name)
             
-        if self.RAW_and_User_info.flags["Noise Data"]:    
+        if self.RAW_and_User_info.flags["Noise Reduction"]:    
             noise_dataframe.to_excel(noise_writers[noise_writer_index], sheet_name = sheet_name)
         
         
@@ -1141,7 +1145,7 @@ class S8Thread(threading.Thread):
             overlap_segments = self.overlap_segments
             peak_list_writer = self.peak_list_writer
         
-        if self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Noise Reduction"]:
             noise_writers = self.noise_writers
         
         if self.RAW_and_User_info.flags["Full Data"]:
@@ -1195,7 +1199,7 @@ class S8Thread(threading.Thread):
         
         
         
-        if self.RAW_and_User_info.flags["Noise Data"]:
+        if self.RAW_and_User_info.flags["Noise Reduction"]:
             for i in range(0, len(noise_writers)):
                 self.CheckUserAbort()
                 noise_writers[i].save()
@@ -1221,7 +1225,7 @@ class S8Thread(threading.Thread):
 ## Frame to pass errors from the thread.
 class Error_Frame(wx.Frame):
     def __init__(self, parent, *args, **kwargs):
-        super(Error_Frame, self).__init__(parent, title="Algorithm Errors", size=(1100, 500), *args, **kwargs)
+        super(Error_Frame, self).__init__(parent, title="Algorithm Messages", size=(1100, 500), *args, **kwargs)
         
         panel = wx.Panel(self)
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -1259,7 +1263,7 @@ class S8_GUI(wx.Frame):
         self.rawfile = None
         self.paths = None
         
-        flags = ["Full Data", "Noise Data", "Peak List"]
+        flags = ["Full Data", "Noise Reduction", "Peak List"]
         self.flags = OrderedDict()
         for flag in flags:
             self.flags[flag] = True
@@ -1268,7 +1272,7 @@ class S8_GUI(wx.Frame):
         self.required_columns = ["Internal Calibration Masses", 
                                  "Internal Calibration Tolerances", 
                                  "Overlap Tolerances", 
-                                 "Bin Widths",
+                                 "Bin Widths (x MiND)",
                                  "Max Injection Time"]
         
         self.segment_settings = {}
@@ -1291,7 +1295,7 @@ class S8_GUI(wx.Frame):
             self.rear_segments_to_skip = self.parser_args.rear_skip
             self.front_segments_to_skip = self.parser_args.front_skip
             self.flags["Full Data"] = self.parser_args.full_data
-            self.flags["Noise Data"] = self.parser_args.noise_data
+            self.flags["Noise Reduction"] = self.parser_args.noise_data
             self.flags["Peak List"] = self.parser_args.peak_list
             self.output_directory = self.parser_args.output_directory
             self.paths = [self.parser_args.raw_file]
@@ -1323,6 +1327,7 @@ class S8_GUI(wx.Frame):
         ##############
         
         self.error_frame = Error_Frame(self)
+        self.error_frame.Bind(wx.EVT_CLOSE, self.OnQuit)
         self.error_frame.Centre()
         self.error_frame.Show()
         
@@ -1643,7 +1648,7 @@ class S8_GUI(wx.Frame):
         message = "Internal Calibration Masses - The m/z of the compound used to correct the m/z's of the segment. Scans without this mass detected in them are also dropped from the analysis. This is typically an internal standard or reliable contaminate with a known m/z. To forgo this correction and the dropping of scans set the value to 0.0 for every segment that it is not desired for.\n\n" + \
             "Internal Calibration Tolerances - The allowable difference between the Internal Calibration Mass and the closest m/z to it. The closest m/z to the Internal Calibration Mass will be found, and if the m/z difference is too large then the analysis will stop because the Internal Calibration Mass could not be found. This should be as small as possible to consistently find the Internal Calibration Mass without being so large that an incorrect m/z is identified as the Internal Calibrant.\n\n" + \
             "Overlap Tolerances - Exactly like the Internal Calibration Tolerances except the m/z's that are being matched are the m/z's in the overlapping regions between segments. All of the peaks in the overlapping region of one segment are matched to the closest peaks in the overlapping region of the other segment. If the difference between the m/z's is greater than the Overlap Tolerance then the peaks aren't considered to be the same compound and the match is ignored.\n\n" + \
-            "Bin Widths - The multiple of 32-bit binary floating point precision to group m/z's with. The m/z's across all scans within a segment are arranged from least to greatest and the difference between the m/z and the next closest m/z is computed. For example, 150.0001, 150.0002, 150.0004 would have nearest neighbor differences of .0001 and .0002. Due to how computers store decimal numbers the nearest neighbor differences will be a multiple of the smallest unit of binary precision. A new grouping will be made whenever the nearest neighbor difference exceeds the Bin Width. See the paper for more details, but the recommended setting is 5.\n\n" + \
+            "Bin Widths (x MiND) - The multiple of 32-bit binary floating point precision to group m/z's with. The m/z's across all scans within a segment are arranged from least to greatest and the difference between the m/z and the next closest m/z is computed. For example, 150.0001, 150.0002, 150.0004 would have nearest neighbor differences of .0001 and .0002. Due to how computers store decimal numbers the nearest neighbor differences will be a multiple of the smallest unit of binary precision. A new grouping will be made whenever the nearest neighbor difference exceeds the Bin Width. See the paper for more details, but the recommended setting is 5.\n\n" + \
             "Max Injection Time - The maximum injection time a scan can have before it is dropped from the analysis. If a scan has an injection time greater than or equal to this value then it is dropped from analysis. By default this is set to the maximum injection time of the scan settings in the .raw file. Typically if a scan has an injection time equal to the maximum injection time for the scan then it was a bad scan, so it is dropped from analysis. To not drop any scans simply set this to a value higher than the maximum injection time for the segment.\n\n" + \
             "Repetition Rate Filter - The minimum percentage of scans a peak must appear in to be considered a real peak. If a peak has m/z's less than this percentage then it considered noise and dropped. For example, if a grouping of m/z's has 5 m/z's but there were 50 total scans then the grouping has a repetition rate of 10%, so if the Repetition Rate Filter is set to greater than 10 the grouping will be dropped.\n\n" + \
             "Front Segments To Skip - The number of segments to skip over in analysis, starting from the front. For example, if the m/z segments are (150 - 300), (270 - 600), and (570 - 900) the first one or two segments could be ignored and the S7 analysis can be done ignoring the (150 - 300) segment or the (150 - 300) and (150 - 300) and (270 - 600) segments. Segments in the middle cannot be ignored since there will be no overlapping region between the (150 - 300) and (570 - 900) segments.\n\n" + \

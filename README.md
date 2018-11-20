@@ -16,7 +16,7 @@ The median m/z value of the m/z grouping is used as the m/z of the peak. This pe
 
 Intensities are normalized between segments by comparing the ratios of the peak intensities of peaks found in the overlapping regions of adjacent segments. Peaks are matched in overlapping regions based on the indicated overlap tolerance and the ratio of the intensities for each match are computed. The average of the ratios is then used to normalize the intensities of the higher m/z segment by multiplying them by the ratio.
 
-There are up to 3 different outputs to the program depending on user input. There is a "Full Data" output which is an Excel file with the peak information for every segment. The "Noise Data" output is an Excel file with the peak information for every segment but with the noise peaks removed. The file also includes information for the overlapping regions. Both the "Full Data" and "Noise Data" files may be split into multiple files depending on the size of the data. The "Peak List" output is an Excel file that simply lists the final corrected m/z's and intensities for each peak.
+There are up to 3 different outputs to the program depending on user input. There is a "Full Data" output which is an Excel file with the peak information for every segment. The "Noise Reduction" output is an Excel file with the peak information for every segment but with the noise peaks removed. The file also includes information for the overlapping regions. Both the "Full Data" and "Noise Reduction" files may be split into multiple files depending on the size of the data. The "Peak List" output is an Excel file that simply lists the final corrected m/z's and intensities for each peak.
 
 Reference
 -----------
@@ -34,11 +34,17 @@ Quick Start
  - Select a directory to save the outputs in.
  - Click "Run" to start the analysis.
 
- A "Peak Lists" folder will be created in the output directory and all of the peak lists for each .raw file will be in this folder, but Full Data and Noise Data reports will be in a folder with the same name as the .raw file for each .raw file.
+ A "Peak Lists" folder will be created in the output directory and all of the peak lists for each .raw file will be in this folder, but Full Data and Noise Reduction reports will be in a folder with the same name as the .raw file for each .raw file.
+
+If you see an error like "The procedure entry point ucrtbase.terminate could not be located in the dynamic link library api-ms-win-crt-runtime-l1-1-0.dll", or "Error loading Python DLL 'C:\Users\...\python36.dll'. LoadLibrary: The specified procedure could not be found." on startup it is because Windows is missing an update. The specific update is the Universal C Runtime and can be obtained through Windows updates or [here](https://support.microsoft.com/en-us/help/2999226/update-for-universal-c-runtime-in-windows).
 
 ## **Important Notes**
 
 Currently S7 only supports .raw files with m/z ranges from 64 to 2048, so if you are looking for compounds outside of that range the binning method will not work appropriately. If you desperately need to use this program on m/z's outside of that range contact us and we can see about extending the range of the program.
+
+Depending on the density of peaks in the .raw file the program may take a long time to complete, and the time can be highly variable. For our data, wide scan full spectrum .raw files with only one m/z segment are the fastest and can take as little as 10 minutes to generate all reports, but the .raw files with many (10-12) m/z segments could take close to an hour to generate all reports. A bigger factor than the density of peaks, however, is what reports are generated. The "Full Data" and "Noise Reduction" reports are generally quite large, so the bottle neck in program completion time ends up being the creation of these reports. For example, the previously mentioned .raw files that would take an hour to complete if all reports were generated would only take around 10 minutes to complete if only the "Peak List" report was generated.
+
+The program is quite memory intensive, so it is advised to have as much RAM as possible. The program has been tested to run on machines with as little as 8 GB of RAM successfully. Lower amounts of RAM have not been tested, but at least 8 GB is the recommendation.
 
 Disclaimer
 -----------
