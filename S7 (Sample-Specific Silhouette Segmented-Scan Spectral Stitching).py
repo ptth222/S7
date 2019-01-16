@@ -26,7 +26,7 @@ import errno
 from collections import OrderedDict
 import argparse
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 numpy.warnings.filterwarnings('ignore')
 
@@ -104,7 +104,7 @@ class S8Thread(threading.Thread):
             self.CheckUserAbort()
             
             self.num_of_cores = multiprocessing.cpu_count()
-                    
+            
             self.Build_Writers()
             
             self.CheckUserAbort()
@@ -148,7 +148,6 @@ class S8Thread(threading.Thread):
                 
                 self.CheckUserAbort()
                 
-                
                 self.GroupPeaksAcrossScans()
                 
                 self.CheckUserAbort()
@@ -161,7 +160,6 @@ class S8Thread(threading.Thread):
                 for k in range(0,number_of_scans):
                     intensity_dataframe.iloc[5:,k] = max_injection_time/intensity_dataframe.iloc[1,k]*intensity_dataframe.iloc[5:,k]
                     
-                
                 
                 self.CalculateBucketStats()
                 
@@ -178,15 +176,14 @@ class S8Thread(threading.Thread):
                 self.CalculateOverlapRegion()
                 
                 self.CheckUserAbort()
-                
+
                 self.AddFinalColumnsAndRearrange()
                 
                 self.CheckUserAbort()
-                
+
                 self.ManageDataframePrinting()
                 
                 self.CheckUserAbort()
-                
                 
                 
             self.WriteToFile()
@@ -2561,12 +2558,12 @@ def main():
 
     
         ex = wx.App(False)
-        S8_GUI(None, title = "S8 Analysis", GUI_show = False, parser_args = args)
+        S8_GUI(None, title = "S7 Analysis", GUI_show = False, parser_args = args)
         ex.MainLoop()
         
     else:
         ex = wx.App(False)
-        S8_GUI(None, title = "S8 Analysis")
+        S8_GUI(None, title = "S7 Analysis")
         ex.MainLoop() 
         
         
@@ -2576,6 +2573,9 @@ def main():
 
 
 if __name__ == "__main__":
+    ## Required to use multiprocessing in Windows with pyinstaller.
+    multiprocessing.freeze_support()
+    
     main()
               
                 
