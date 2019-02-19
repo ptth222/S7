@@ -25,8 +25,9 @@ import threading
 import errno
 from collections import OrderedDict
 import argparse
+import traceback
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 numpy.warnings.filterwarnings('ignore')
 
@@ -1234,14 +1235,49 @@ class Error_Frame(wx.Frame):
         panel.Fit()
         
 
-        
 
+############################################################################
+## Taken from https://www.blog.pythonlibrary.org/2014/01/31/wxpython-how-to-catch-all-exceptions/
+class ExceptionDialog(GMD.GenericMessageDialog):
+    """"""
+ 
+    #----------------------------------------------------------------------
+    def __init__(self, msg):
+        """Constructor"""
+        GMD.GenericMessageDialog.__init__(self, None, msg, "Exception!",
+                                          wx.OK|wx.ICON_ERROR)
+ 
+ 
+#----------------------------------------------------------------------
+def MyExceptionHook(etype, value, trace):
+    """
+    Handler for all unhandled exceptions.
+ 
+    :param `etype`: the exception type (`SyntaxError`, `ZeroDivisionError`, etc...);
+    :type `etype`: `Exception`
+    :param string `value`: the exception error message;
+    :param string `trace`: the traceback header, if any (otherwise, it prints the
+     standard Python header: ``Traceback (most recent call last)``.
+    """
+    #frame = wx.GetApp().GetTopWindow()
+    tmp = traceback.format_exception(etype, value, trace)
+    exception = "".join(tmp)
+ 
+    dlg = ExceptionDialog(exception)
+    dlg.ShowModal()
+    dlg.Destroy() 
+
+
+#############################################################################
 
 
 class S8_GUI(wx.Frame):
     def __init__(self, parent, title, GUI_show = True, parser_args = None, *args, **kwargs):
         min_size=(1100,550)
         super(S8_GUI, self).__init__(parent, title=title, size=min_size, *args, **kwargs)
+        
+        sys.excepthook = MyExceptionHook
+        
         self.SetMinSize(min_size)
         
         self.parser_args = parser_args
@@ -1931,6 +1967,12 @@ class S8_GUI(wx.Frame):
             rawfile = ThermoRawfile(path)
         except IOError:
             self.Algorithm_error_printer("Error: Unable to open RAWfile, check the path and try again.")
+            return False
+        except SystemExit:
+            message = "The .raw file could not be read. The most likely cause is that MSFileReader is not installed. Please install Thermo's MSFileReader and try again."
+            msg_dlg = wx.MessageDialog(None, message, "Warning", wx.OK | wx.ICON_EXCLAMATION)
+            msg_dlg.ShowModal()
+            msg_dlg.Destroy()
             return False
         
         mass_ranges = []

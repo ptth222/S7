@@ -25,7 +25,8 @@ If you would like to reference the paper please use DOI (paper DOI here).
 
 Quick Start
 -----------
- - Download [S7 (Sample-Specific Silhouette Segmented-Scan Spectral Stitching).zip] (hyperlink here)
+ - If not already installed, install Thermo's MSFileReader.
+ - Download [S7.zip] (hyperlink here)
  - Unzip the file.
  - Run the .exe to start in GUI mode.
  - Open one or more *.raw files from File -> Open.
