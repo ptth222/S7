@@ -1,7 +1,7 @@
 S7 (Sample-Specific Silhouette Segmented-Scan Spectral Stitching)
 =============
 
-S7 is an implementation of the paper (paper here).
+S7 is an implementation of the paper Improved Segmented-Scan Spectral Stitching for Stable Isotope Resolved Metabolomics (SIRM) by Ultra-High-Resolution Fourier Transform Mass Spectrometry.
 It is a program to normalize segment intensities by injection time, group m/z's across scans, correct m/z's based on internal calibrants, reduce the number of noise peaks, and normalize intensities between segments.
 
 Scans without any internal calibrant are dropped. The closest m/z to the Internal Calibration Mass is found in each scan, and if the difference between it and the Internal Calibration Mass is greater than the Internal Calibration Tolerance the scan is dropped from the analysis.
@@ -26,9 +26,10 @@ If you would like to reference the paper please use DOI (paper DOI here).
 Quick Start
 -----------
  - If not already installed, install Thermo's MSFileReader.
- - Download [S7.zip] (hyperlink here)
+ - Download [S7-v\*.\*.*.zip](https://zenodo.org/badge/latestdoi/150272490).
  - Unzip the file.
- - Run the .exe to start in GUI mode.
+ - Run the installer to install the program.
+ - Double click the shortcut or the exe in the installation directory to start the program in GUI mode.
  - Open one or more *.raw files from File -> Open.
  - Fill in the settings for each segment and click "Save to File" so they can be "Load from File" in the future.
  - Select the outputs you would like to see.

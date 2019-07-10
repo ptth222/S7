@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+run_pyinstaller.bat
+Installers/S7.zip
+Create_Installer.iss
+Installers/S7_Installer.exe
