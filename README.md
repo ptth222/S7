@@ -1,7 +1,7 @@
 S7 (Sample-Specific Silhouette Segmented-Scan Spectral Stitching)
 =============
 
-S7 is an implementation of the paper Improved Segmented-Scan Spectral Stitching for Stable Isotope Resolved Metabolomics (SIRM) by Ultra-High-Resolution Fourier Transform Mass Spectrometry.
+S7 is an implementation of the paper [Improved Segmented-Scan Spectral Stitching for Stable Isotope Resolved Metabolomics (SIRM) by Ultra-High-Resolution Fourier Transform Mass Spectrometry](https://doi.org/10.1016/j.aca.2019.06.019).
 It is a program to normalize segment intensities by injection time, group m/z's across scans, correct m/z's based on internal calibrants, reduce the number of noise peaks, and normalize intensities between segments.
 
 Scans without any internal calibrant are dropped. The closest m/z to the Internal Calibration Mass is found in each scan, and if the difference between it and the Internal Calibration Mass is greater than the Internal Calibration Tolerance the scan is dropped from the analysis.
@@ -21,7 +21,7 @@ There are up to 3 different outputs to the program depending on user input. Ther
 Reference
 -----------
 If you use the software for a publication please use DOI [10.5281/zenodo.1434958](https://zenodo.org/badge/latestdoi/150272490) as a reference.
-If you would like to reference the paper please use DOI (paper DOI here).
+If you would like to reference the paper please use DOI https://doi.org/10.1016/j.aca.2019.06.019.
 
 Quick Start
 -----------
