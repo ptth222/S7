@@ -12,7 +12,7 @@ S7 is a tool to group signals across scans, reduce noise, and normalize intensit
 import numpy
 import pandas
 import datetime
-from MSFileReader.MSFileReader import ThermoRawfile
+from pymsfilereader import MSFileReader
 import multiprocessing
 import Multiprocessing_Functions as MP
 import wx
@@ -27,7 +27,7 @@ from collections import OrderedDict
 import argparse
 import traceback
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 numpy.warnings.filterwarnings('ignore')
 
@@ -439,7 +439,7 @@ class S8Thread(threading.Thread):
             ## Filter down to only the buckets with at least 40% repetition rate.
             intensity_dataframe = intensity_dataframe[intensity_dataframe["Number of Signals in m/z Range"] > number_of_scans*.4]
             if len(intensity_dataframe) == 0:
-                message = "No signals in internal calibrant range have a repetition rate greater than 40% for segment", i, "try using a different internal calibrant m/z."
+                message = "No signals in internal calibrant range have a repetition rate greater than 40% for segment " + str(i) + " try using a different internal calibrant m/z."
                 wx.PostEvent(self.RAW_and_User_info, ThreadErrorEvent(message))
                 needs_quit = True
             else:
@@ -456,7 +456,7 @@ class S8Thread(threading.Thread):
                 if abs(correction_factor) < tolerance:
                     correction_factors.append(correction_factor)
                 else:
-                    message = "Couldn't find internal calibrant for segment.", i, "Try increasing tolerance limit.", tolerance, correction_factor
+                    message = "Couldn't find internal calibrant for segment " + str(i) + ". Try increasing the tolerance limit. The closest mass to the internal calibrant is " + str(closest_mass) + "."
                     wx.PostEvent(self.RAW_and_User_info, ThreadErrorEvent(message))
                     needs_quit = True
 
@@ -1964,7 +1964,7 @@ class S8_GUI(wx.Frame):
             self.rawfile = None
             
         try:
-            rawfile = ThermoRawfile(path)
+            rawfile = MSFileReader(path)
         except IOError:
             self.Algorithm_error_printer("Error: Unable to open RAWfile, check the path and try again.")
             return False
